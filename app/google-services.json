@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1052468420376",
+    "firebase_url": "https://real-firebase-88a19-default-rtdb.firebaseio.com",
+    "project_id": "real-firebase-88a19",
+    "storage_bucket": "real-firebase-88a19.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1052468420376:android:978ce1106f765cbe37c86d",
+        "android_client_info": {
+          "package_name": "wonpa.alwaysweb.com.myloctest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1052468420376-bl9k9g0ce8sr5rqufhkjca5lf5au0nkm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wonpa.alwaysweb.com.myloctest",
+            "certificate_hash": "835037569b2e1171099d1cefc54e4b12b6be2a4b"
+          }
+        },
+        {
+          "client_id": "1052468420376-0nlo5iet2vgccn5inm07qvki6rrgm6eb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeYk-H1FEYZxtiN1eFr32IwlXD72N9ugI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1052468420376-0nlo5iet2vgccn5inm07qvki6rrgm6eb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
