@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="wonpa.alwaysweb.com.myloctest">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <permission android:name="wonpa.alwaysweb.com.myloctest.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
@@ -36,7 +35,8 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

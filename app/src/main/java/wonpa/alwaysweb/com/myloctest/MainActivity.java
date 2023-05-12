@@ -30,10 +30,17 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
 
 public class MainActivity extends AppCompatActivity implements AutoPermissionsListener {
+
+    private DatabaseReference mDatabase;
+
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private Button button1, button2;
     private TextView textView1;
     LocationManager manager;
@@ -60,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         gpsListener = new GPSListener();
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         try {
             MapsInitializer.initialize(this);
         } catch (Exception e) {
@@ -79,6 +88,14 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         // 최초 지도 숨김
         mapFragment.getView().setVisibility(View.GONE);
 
+        button1.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                startLocationService();
+            }
+        });
+
+
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +108,12 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
 
         AutoPermissions.Companion.loadAllPermissions(this, 101);
     }
+
+    private void updateLocationToDatabase(double latitude, double longitude){
+        mDatabase.child("users").child("user1").child("latitude").setValue(latitude);
+        mDatabase.child("users").child("user1").child("longitude").setValue(longitude);
+    }
+
 
     public void startLocationService() {
         try {
@@ -127,9 +150,9 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                     String message = "최근 위치2 -> Latitude : " + latitude + "\n Longitude : " + longitude;
 
                     textView1.setText(message);
-                    showCurrentLocation(latitude,longitude);
+                    showCurrentLocation(latitude, longitude);
 
-                    Log.i("MyLocTest","최근 위치2 호출");
+                    Log.i("MyLocTest", "최근 위치2 호출");
                 }
 
 
@@ -137,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
                 manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, gpsListener);
                 //manager.removeUpdates(gpsListener);
                 Toast.makeText(getApplicationContext(), "내 위치2확인 요청함", Toast.LENGTH_SHORT).show();
-                Log.i("MyLocTest","requestLocationUpdates() 내 위치2에서 호출시작 ~~ ");
+                Log.i("MyLocTest", "requestLocationUpdates() 내 위치2에서 호출시작 ~~ ");
             }
 
         } catch (SecurityException e) {
@@ -156,8 +179,9 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             String message = "내 위치는 Latitude : " + latitude + "\nLongtitude : " + longitude;
             textView1.setText(message);
 
-            showCurrentLocation(latitude,longitude);
-            Log.i("MyLocTest","onLocationChanged() 호출되었습니다.");
+            showCurrentLocation(latitude, longitude);
+            updateLocationToDatabase(latitude, longitude);
+            Log.i("MyLocTest", "onLocationChanged() 호출되었습니다.");
         }
 
         @Override
@@ -181,7 +205,9 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         super.onResume();
 
         // GPS provider를 이용전에 퍼미션 체크
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission
+                (Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    Activity#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -189,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for Activity#requestPermissions for more details.
-            Toast.makeText(getApplicationContext(),"접근 권한이 없습니다.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "접근 권한이 없습니다.", Toast.LENGTH_SHORT).show();
             return;
         } else {
 
@@ -204,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
             if (map != null) {
                 map.setMyLocationEnabled(true);
             }
-            Log.i("MyLocTest","onResume에서 requestLocationUpdates() 되었습니다.");
+            Log.i("MyLocTest", "onResume에서 requestLocationUpdates() 되었습니다.");
         }
     }
 
@@ -216,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
         if (map != null) {
             map.setMyLocationEnabled(false);
         }
-        Log.i("MyLocTest","onPause에서 removeUpdates() 되었습니다.");
+        Log.i("MyLocTest", "onPause에서 removeUpdates() 되었습니다.");
     }
 
     private void showCurrentLocation(double latitude, double longitude) {
@@ -260,16 +286,18 @@ public class MainActivity extends AppCompatActivity implements AutoPermissionsLi
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         AutoPermissions.Companion.parsePermissions(this, requestCode, permissions, this);
-        Toast.makeText(this, "requestCode : "+requestCode+"  permissions : "+permissions+"  grantResults :"+grantResults, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "requestCode : " + requestCode + "  permissions : " + permissions + "  grantResults :" + grantResults, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDenied(int requestCode, String[] permissions) {
-        Toast.makeText(getApplicationContext(),"permissions denied : " + permissions.length, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "permissions denied : " + permissions.length, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onGranted(int requestCode, String[] permissions) {
-        Toast.makeText(getApplicationContext(),"permissions granted : " + permissions.length, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "permissions granted : " + permissions.length, Toast.LENGTH_SHORT).show();
     }
+
+
 }
